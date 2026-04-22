@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>StreamFlix Quiz</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #141414;
+    color: white;
+}
+
+.header {
+    background: #000;
+    padding: 15px 30px;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #e50914;
+}
+
+.container {
+    padding: 20px 40px;
+}
+
+.featured {
+    background: linear-gradient(to right, #000, #222);
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.quote {
+    font-size: 1.6em;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+input {
+    padding: 12px;
+    width: 60%;
+    border: none;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+button {
+    padding: 12px 15px;
+    border: none;
+    border-radius: 5px;
+    background: #e50914;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #b00610;
+}
+
+#feedback {
+    margin-top: 15px;
+    font-size: 1.2em;
+    min-height: 30px;
+}
+
+#hint {
+    margin-top: 10px;
+    color: #f5c518;
+    font-size: 1em;
+    min-height: 20px;
+}
+
+.stats {
+    margin-top: 15px;
+    opacity: 0.9;
+}
+
+/* movie row */
+.row-title {
+    margin-top: 40px;
+    font-size: 1.2em;
+}
+
+.row {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.card {
+    min-width: 180px;
+    background: #222;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+
+.card:hover {
+    background: #333;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">STREAMFLIX QUIZ</div>
+
+<div class="container">
+
+    <div class="featured">
+        <div class="quote" id="quote">Click "Next Movie" to start 🎬</div>
+
+        <input type="text" id="guess" placeholder="Guess the movie...">
+
+        <button onclick="checkAnswer()">Submit</button>
+        <button onclick="nextQuote()">Next Movie</button>
+
+        <div id="feedback"></div>
+        <div id="hint"></div>
+
+        <div class="stats">
+            Score: <span id="score">0</span> |
+            Questions: <span id="count">0</span>
+        </div>
+    </div>
+
+    <div class="row-title">🔥 Movie Library</div>
+    <div class="row">
+        <div class="card">Terminator</div>
+        <div class="card">Star Wars</div>
+        <div class="card">The Dark Knight</div>
+        <div class="card">Titanic</div>
+        <div class="card">Finding Nemo</div>
+        <div class="card">Spider-Man</div>
+        <div class="card">The Godfather</div>
+        <div class="card">Forrest Gump</div>
+    </div>
+
+</div>
+
+<script>
+const movies = [
+    {
+        quote: "I'll be back.",
+        answer: "terminator",
+        genre: "Sci-Fi Action",
+        hint: "A cyborg assassin is sent from the future.",
+        extra: "Arnold Schwarzenegger plays a robotic killer."
+    },
+    {
+        quote: "May the Force be with you.",
+        answer: "star wars",
+        genre: "Space Opera / Adventure",
+        hint: "A rebellion fights an evil galactic empire.",
+        extra: "Jedi warriors use lightsabers."
+    },
+    {
+        quote: "Why so serious?",
+        answer: "the dark knight",
+        genre: "Superhero / Crime",
+        hint: "A hero battles a chaotic villain in Gotham.",
+        extra: "The villain wears clown makeup."
+    },
+    {
+        quote: "I'm the king of the world!",
+        answer: "titanic",
+        genre: "Romance / Drama",
+        hint: "A love story on a doomed ship.",
+        extra: "The ship hits an iceberg and sinks."
+    },
+    {
+        quote: "Just keep swimming.",
+        answer: "finding nemo",
+        genre: "Animation / Family",
+        hint: "A father fish searches for his lost son.",
+        extra: "Set in the ocean with colorful sea life."
+    },
+    {
+        quote: "With great power comes great responsibility.",
+        answer: "spider-man",
+        genre: "Superhero / Action",
+        hint: "A teen gains powers from a spider bite.",
+        extra: "He swings through New York City."
+    },
+    {
+        quote: "Houston, we have a problem.",
+        answer: "apollo 13",
+        genre: "Historical / Space Drama",
+        hint: "A real NASA mission goes wrong in space.",
+        extra: "Based on true events."
+    },
+    {
+        quote: "You can't handle the truth!",
+        answer: "a few good men",
+        genre: "Legal Drama",
+        hint: "A courtroom case exposes military secrets.",
+        extra: "Famous courtroom shouting scene."
+    },
+    {
+        quote: "Here's Johnny!",
+        answer: "the shining",
+        genre: "Horror",
+        hint: "A man becomes isolated in a haunted hotel.",
+        extra: "Directed by Stanley Kubrick."
+    },
+    {
+        quote: "I'm gonna make him an offer he can't refuse.",
+        answer: "the godfather",
+        genre: "Crime / Drama",
+        hint: "A mafia family controls organized crime.",
+        extra: "One of the most famous films ever made."
+    },
+    {
+        quote: "Life is like a box of chocolates.",
+        answer: "forrest gump",
+        genre: "Drama",
+        hint: "A simple man experiences major historical events.",
+        extra: "He runs across America multiple times."
+    }
+];
+
+let current;
+let score = 0;
+let count = 0;
+
+function nextQuote() {
+    current = movies[Math.floor(Math.random() * movies.length)];
+    document.getElementById("quote").innerText = `"${current.quote}"`;
+    document.getElementById("feedback").innerText = "";
+    document.getElementById("hint").innerText = "";
+    document.getElementById("guess").value = "";
+}
+
+function checkAnswer() {
+    if (!current) {
+        document.getElementById("feedback").innerText = "Click Next Movie first!";
+        return;
+    }
+
+    let guess = document.getElementById("guess").value.toLowerCase().trim();
+    count++;
+
+    if (guess === current.answer) {
+        score++;
+        document.getElementById("feedback").innerText = "✅ Correct!";
+        document.getElementById("hint").innerText = "";
+    } else {
+        document.getElementById("feedback").innerText = "❌ Wrong!";
+        document.getElementById("hint").innerHTML =
+            "🎭 Genre: " + current.genre +
+            "<br>💡 Hint: " + current.hint +
+            "<br>🎬 Extra clue: " + current.extra;
+    }
+
+    document.getElementById("score").innerText = score;
+    document.getElementById("count").innerText = count;
+}
+</script>
+
+</body>
+</html>
